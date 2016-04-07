@@ -1,6 +1,10 @@
 #Pycharm
 .idea/
 
+#temp files from tests
+psi.*.clean
+timer.dat
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
