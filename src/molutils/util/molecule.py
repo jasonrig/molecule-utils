@@ -128,33 +128,43 @@ class Molecule(MoleculeFormatterMixin):
     def get_z_sum(self):
         return sum([lookup_element_by_symbol(atom[0])[0] for atom in self])
 
-    def get_possible_closed_shell_charges(self, lower_range=-1, upper_range=1):
-        return [q for q in range(lower_range, upper_range + 1) if (self.get_z_sum() + q) % 2 == 0]
+    def get_possible_charges(self, lower_range=-1, upper_range=1, multiplicity=1):
+        if multiplicity % 2 > 0:
+            return [q for q in range(lower_range, upper_range + 1) if (self.get_z_sum() + q) % 2 == 0]
+        else:
+            return [q for q in range(lower_range, upper_range + 1) if (self.get_z_sum() + q) % 2 > 0]
 
-    def guess_charge(self, lower_range=-1, upper_range=1):
+    def guess_charge(self, lower_range=-1, upper_range=1, multiplicity=1):
         if self.psi4_path is None:
             raise ValueError("Psi4 path must be provided for this method to work")
 
-        possible_charges = self.get_possible_closed_shell_charges(lower_range=lower_range, upper_range=upper_range)
+        possible_charges = self.get_possible_charges(lower_range=lower_range, upper_range=upper_range, multiplicity=multiplicity)
         if len(possible_charges) == 1:
             return possible_charges[0]
 
         job_template = (
             "{molecule}"
             "set basis STO-3G\n"
-            "set reference rhf\n"
+            "set reference {reference}\n"
             "energy('scf')"
         )
 
         p = re.compile(r'Total Energy\s+=\s+([-0-9\.]+)')
 
+        self.multiplicity = multiplicity
         lowest_energy_and_charge = None
         for q in possible_charges:
             proc = subprocess.Popen([self.psi4_path, '-i', 'stdin', '-o', 'stdout'], stdin=subprocess.PIPE,
                                     stdout=subprocess.PIPE)
             self.charge = q
-            self.multiplicity = 1
-            proc.stdin.write(str.encode(job_template.format(molecule=self.format_psi4())))
+            proc.stdin.write(
+                str.encode(
+                    job_template.format(
+                        molecule=self.format_psi4(),
+                        reference='rhf' if multiplicity == 1 else 'uhf'
+                    )
+                )
+            )
             proc.stdin.close()
             result = proc.stdout.read().decode('utf-8')
             energy_search = p.search(result)

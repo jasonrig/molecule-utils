@@ -40,6 +40,12 @@ WATER_XYZ_FILE = (
     "H                   -1.419465    0.543189    0.243811\n"
 )
 
+NITROGEN_ATOM = (
+    "1\n"
+    "\n"
+    "N  0.00 0.00 0.00"
+)
+
 
 class MoleculeTest(unittest.TestCase):
     @staticmethod
@@ -78,15 +84,19 @@ class MoleculeTest(unittest.TestCase):
         self.assertEqual(lookup_element_by_symbol('h')[0], 1)
         self.assertIsNone(lookup_element_by_symbol('zz'))
 
-    def test_possible_closed_shell_charges(self):
+    def test_possible_charges(self):
         ionic_dimer = Molecule.from_xyz_file(StringIO(DIMER_XYZ_FILE))
         fragments = sorted(ionic_dimer.fragment(2), key=len)
-        self.assertEqual(ionic_dimer.get_possible_closed_shell_charges(), [0])
-        self.assertEqual(fragments[0].get_possible_closed_shell_charges(), [-1, 1])
-        self.assertEqual(fragments[1].get_possible_closed_shell_charges(), [-1, 1])
+        self.assertEqual(ionic_dimer.get_possible_charges(), [0])
+        self.assertEqual(fragments[0].get_possible_charges(), [-1, 1])
+        self.assertEqual(fragments[1].get_possible_charges(), [-1, 1])
 
         water = Molecule.from_xyz_file(StringIO(WATER_XYZ_FILE))
-        self.assertEqual(water.get_possible_closed_shell_charges(), [0])
+        self.assertEqual(water.get_possible_charges(), [0])
+
+        nitrogen_atom = Molecule.from_xyz_file(StringIO(NITROGEN_ATOM))
+        self.assertEqual(nitrogen_atom.get_possible_charges(multiplicity=4), [0])
+        self.assertEqual(nitrogen_atom.get_possible_charges(multiplicity=1), [-1, 1])
 
     def test_guess_charge(self):
         if not os.path.isfile(PATH_TO_PSI4) or not os.access(PATH_TO_PSI4, os.X_OK):
@@ -96,3 +106,7 @@ class MoleculeTest(unittest.TestCase):
         self.assertEqual(molecule.guess_charge(), 0)
         self.assertEqual(fragments[0].guess_charge(), -1)
         self.assertEqual(fragments[1].guess_charge(), 1)
+
+        nitrogen_atom = Molecule.from_xyz_file(StringIO(NITROGEN_ATOM), PATH_TO_PSI4)
+        self.assertEqual(nitrogen_atom.guess_charge(multiplicity=4, lower_range=-3, upper_range=3), 0)
+        self.assertEqual(nitrogen_atom.guess_charge(multiplicity=1, lower_range=-3, upper_range=3), -1)
