@@ -1,4 +1,4 @@
-from molutils.util.periodic_table import lookup_element_by_symbol
+from .periodic_table import lookup_element_by_symbol
 
 
 class MoleculeFormatterMixin(object):
@@ -27,7 +27,8 @@ class MoleculeFormatterMixin(object):
     def format_psi4_group(molecule_list, guess_charge=False):
 
         for molecule in molecule_list:
-            molecule.guess_charge()
+            if guess_charge:
+                molecule.guess_charge()
 
         coordinate_template = "  {label} {x:.10f} {y:.10f} {z:.10f}\n"
         molecule_inner_template = (

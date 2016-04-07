@@ -2,8 +2,9 @@ import unittest
 import os
 from io import StringIO
 
-from molutils.util.molecule import Molecule
-from molutils.util.periodic_table import lookup_element_by_symbol
+from ..molutils.util.molecule import Molecule
+from ..molutils.util.periodic_table import lookup_element_by_symbol
+from ..molutils.util.job_formatters.psi4 import Psi4JobFormatter
 
 PATH_TO_PSI4 = "/opt/psi4/bin/psi4.run"
 
@@ -108,5 +109,53 @@ class MoleculeTest(unittest.TestCase):
         self.assertEqual(fragments[1].guess_charge(), 1)
 
         nitrogen_atom = Molecule.from_xyz_file(StringIO(NITROGEN_ATOM), PATH_TO_PSI4)
-        self.assertEqual(nitrogen_atom.guess_charge(multiplicity=4, lower_range=-3, upper_range=3), 0)
-        self.assertEqual(nitrogen_atom.guess_charge(multiplicity=1, lower_range=-3, upper_range=3), -1)
+        self.assertEqual(nitrogen_atom.guess_charge(multiplicity=4), 0)
+        self.assertEqual(nitrogen_atom.guess_charge(multiplicity=1), -1)
+
+    def test_sapt_job_format(self):
+        expected_output = (
+            "memory 250 mb\n"
+            "molecule molecule_title2 {\n"
+            "-1 1\n"
+            "  F 1.0978240000 2.7174850000 1.1327150000\n"
+            "  B 1.5134380000 2.9080550000 2.4889420000\n"
+            "  F 1.6257590000 4.2533500000 2.8035290000\n"
+            "  F 2.7631160000 2.2246080000 2.6569700000\n"
+            "  F 0.5529060000 2.2548880000 3.3306340000\n"
+            "--\n"
+            "1 1\n"
+            "  C 0.0000000000 0.0000000000 0.0000000000\n"
+            "  H -0.9104550000 0.0242860000 -0.5720400000\n"
+            "  C 1.3130450000 -0.0176590000 -0.3998500000\n"
+            "  H 1.7504700000 -0.0115750000 -1.3823880000\n"
+            "  N 0.0000000000 0.0000000000 1.3740550000\n"
+            "  C 1.2681540000 0.0000000000 1.8084390000\n"
+            "  H 1.5812910000 0.0961920000 2.8319980000\n"
+            "  N 2.0787790000 -0.0279220000 0.7409880000\n"
+            "  C -1.1764940000 0.1909410000 2.2251190000\n"
+            "  H -0.9042710000 -0.0496850000 3.2468120000\n"
+            "  H -1.4715240000 1.2347370000 2.1760380000\n"
+            "  H -1.9661530000 -0.4699910000 1.8776900000\n"
+            "  C 3.5342720000 0.1278090000 0.7907040000\n"
+            "  H 3.8718040000 -0.1139720000 1.7924450000\n"
+            "  H 3.7775110000 1.1644510000 0.5779770000\n"
+            "  H 3.9798490000 -0.5495240000 0.0669790000\n"
+            "}\n"
+            "\n"
+            "set {\n"
+            "  guess sad\n"
+            "  basis_guess 3-21G\n"
+            "  basis cc-pVTZ\n"
+            "  scf_type DF\n"
+            "  freeze_core True\n"
+            "}\n"
+            "energy('sapt0')\n"
+        )
+        molecule = Molecule.from_xyz_file(StringIO(DIMER_XYZ_FILE), PATH_TO_PSI4)
+        fragments = sorted(molecule.fragment(2), key=len)
+        fragments[0].charge = -1
+        fragments[0].multiplicity = 1
+        fragments[1].charge = 1
+        fragments[1].multiplicity = 1
+        job = Psi4JobFormatter(fragments).energy("sapt0")
+        self.assertEqual(job, expected_output)

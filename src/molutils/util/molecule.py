@@ -3,8 +3,8 @@ import os
 import re
 import subprocess
 
-from molutils.util.molecule_formatters import MoleculeFormatterMixin
-from molutils.util.periodic_table import lookup_element_by_symbol
+from .molecule_formatters import MoleculeFormatterMixin
+from .periodic_table import lookup_element_by_symbol
 
 DEFAULT_PSI4_EXECUTABLE = "psi4"
 
@@ -127,6 +127,9 @@ class Molecule(MoleculeFormatterMixin):
 
     def get_z_sum(self):
         return sum([lookup_element_by_symbol(atom[0])[0] for atom in self])
+
+    def electron_count(self):
+        return self.get_z_sum() + self.charge
 
     def get_possible_charges(self, lower_range=-1, upper_range=1, multiplicity=1):
         if multiplicity % 2 > 0:
