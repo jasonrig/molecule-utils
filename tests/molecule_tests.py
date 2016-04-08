@@ -2,9 +2,9 @@ import unittest
 import os
 from io import StringIO
 
-from ..molutils.util.molecule import Molecule
-from ..molutils.util.periodic_table import lookup_element_by_symbol
-from ..molutils.util.job_formatters.psi4 import Psi4JobFormatter
+from molutils.util.molecule import Molecule
+from molutils.util.periodic_table import lookup_element_by_symbol
+from molutils.util.job_formatters.psi4 import Psi4JobFormatter
 
 PATH_TO_PSI4 = "/opt/psi4/bin/psi4.run"
 

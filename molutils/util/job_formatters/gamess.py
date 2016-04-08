@@ -1,0 +1,2 @@
+class GamessJobFormatter(object):
+    pass
