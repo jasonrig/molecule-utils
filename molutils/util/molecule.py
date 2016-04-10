@@ -177,7 +177,6 @@ class Molecule(MoleculeFormatterMixin):
             )
             proc.stdin.close()
             result = proc.stdout.read().decode('utf-8')
-            print(result)
             energy_search = p.search(result)
             if energy_search is not None:
                 energy = float(energy_search.group(1))
