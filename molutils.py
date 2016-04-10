@@ -10,7 +10,6 @@ def main(args):
         input_files = []
         for file in args.input:
             molecules = Molecule.from_xyz_file(file, psi4_path=args.path_to_psi4)
-
             if args.n_frags > 1:
                 molecules = molecules.fragment(args.n_frags)
             else:
@@ -19,6 +18,7 @@ def main(args):
             if args.guess_charge:
                 for m in molecules:
                     m.guess_charge()
+            n_electrons = sum([m.get_z_sum() + m.charge for m in molecules])
             job_formatter = Psi4JobFormatter(molecules, basis_set=args.basis_set, memory=args.memory, memory_units="Gb")
             if args.calc_type == "energy":
                 output = job_formatter.energy(type=args.calc_method, molecule=molecules)
@@ -38,13 +38,13 @@ def main(args):
             output_file_name = xyz_ext_matcher.sub('.out', file, count=1)
             if not output_file_name.endswith('.out'):
                 output_file_name += '.out'
-            input_files.append((input_file_name, output_file_name))
+            input_files.append((n_electrons, input_file_name, output_file_name))
 
             with open(input_file_name, "w") as f:
                 f.write(output)
 
         run_script = ["#!/bin/bash"]
-        for input, output in input_files:
+        for _, input, output in sorted(input_files, key=lambda x: x[0]):
             run_script.append("echo \"Running %s...\"" % input)
             run_script.append(args.path_to_psi4 + " " + input + " " + output)
         run_script = '\n'.join(run_script)
