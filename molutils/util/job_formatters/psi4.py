@@ -15,6 +15,8 @@ class Psi4JobFormatter(object):
 
         if isinstance(molecule, Molecule):
             molecule_text = molecule.format_psi4()
+        elif len(molecule) == 1:
+            molecule_text = molecule[0].format_psi4()
         else:
             molecule_text = Molecule.format_psi4_group(molecule)
 

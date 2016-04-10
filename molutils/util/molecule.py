@@ -46,6 +46,9 @@ class Molecule(MoleculeFormatterMixin):
             atom_list = []
             line_number = 0
             for line in fp:
+                # Ignore leading blank lines
+                if line_number == 0 and len(line.strip()) == 0:
+                    continue
                 xyz_parts = line.split()
                 if line_number == 1:
                     title = line
@@ -54,7 +57,7 @@ class Molecule(MoleculeFormatterMixin):
                 line_number += 1
             return Molecule(title, atom_list, psi4_path=psi4_path)
 
-        if not hasattr(xyz_file, '__iter__'):
+        if isinstance(xyz_file, str):
             with open(xyz_file, 'r') as f:
                 return read_xyz_file(f)
         else:
