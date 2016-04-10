@@ -23,6 +23,9 @@ class Molecule(MoleculeFormatterMixin):
         self.multiplicity = multiplicity
 
         self.title = title.strip()
+        if not self.title:
+            self.title = "input_molecule"
+
         if atom_list is not None:
             self.atom_list = list(atom_list)
         else:
@@ -152,6 +155,7 @@ class Molecule(MoleculeFormatterMixin):
             "{molecule}"
             "set basis STO-3G\n"
             "set reference {reference}\n"
+            "set guess sad\n"
             "energy('scf')"
         )
 
@@ -173,6 +177,7 @@ class Molecule(MoleculeFormatterMixin):
             )
             proc.stdin.close()
             result = proc.stdout.read().decode('utf-8')
+            print(result)
             energy_search = p.search(result)
             if energy_search is not None:
                 energy = float(energy_search.group(1))
