@@ -155,6 +155,15 @@ class MoleculeTest(unittest.TestCase):
         self.assertEqual(nitrogen_atom.guess_charge(multiplicity=4), 0)
         self.assertEqual(nitrogen_atom.guess_charge(multiplicity=1), -1)
 
+    def test_efp_atom_padding(self):
+        molecule = Molecule('', [('Cl', 0.0, 0.0, 0.0)], 1, 1)
+        molecule.efp_pad_dummy_atoms()
+        self.assertEqual(len(molecule), 3)
+
+        molecule = Molecule('', [('Cl', 0.0, 0.0, 0.0), ('Cl', 0.5, 0.0, 0.0),], 0, 1)
+        molecule.efp_pad_dummy_atoms()
+        self.assertEqual(len(molecule), 3)
+
     def test_sapt_job_format(self):
         expected_output = (
             "memory 250 mb\n"

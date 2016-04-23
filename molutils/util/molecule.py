@@ -2,6 +2,7 @@ import math
 import os
 import re
 import subprocess
+import random
 
 from .molecule_formatters import MoleculeFormatterMixin
 from .periodic_table import lookup_element_by_symbol
@@ -167,6 +168,16 @@ class Molecule(MoleculeFormatterMixin):
             fragments[i].title += str(n_frags)
 
         return fragments
+
+    def efp_pad_dummy_atoms(self):
+        """
+        Adds dummy atoms if less than three atoms are present
+        :return: self
+        """
+        for i in range(len(self), 3):
+            self.atom_list.append(('X', random.uniform(0.5, 1.5), random.uniform(0.5, 1.5), random.uniform(0.5, 1.5)))
+
+        return self
 
     def get_z_sum(self):
         return sum([lookup_element_by_symbol(atom[0])[0] for atom in self])

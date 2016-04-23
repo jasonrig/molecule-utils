@@ -1,4 +1,5 @@
 ELEMENTS = [
+    (0, 'X', 'Dummy'),
     (1, 'H', 'Hydrogen'),
     (2, 'He', 'Helium'),
     (3, 'Li', 'Lithium'),

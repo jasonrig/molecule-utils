@@ -55,7 +55,12 @@ class MoleculeFormatterMixin(object):
         if guess_charge:
             self.guess_charge()
 
-        template = (" $CONTRL ICHARG={charge} MULT={multiplicity} $END\n"
+        scf_type = "RHF"
+        if self.multiplicity != 1:
+            scf_type = "UHF"
+
+        template = (" $CONTRL ICHARG={charge} MULT={multiplicity} SCFTYP={scf_type} $END\n"
+                    " $SCF DIRSCF=.TRUE. DIIS=.TRUE. $END\n"
                     " $DATA\n"
                     "C1\n"
                     "{title}\n"
@@ -68,5 +73,5 @@ class MoleculeFormatterMixin(object):
             coordinate_block += coordinate_template.format(label=atom[0], z_number=lookup_element_by_symbol(atom[0])[0],
                                                            x=atom[1], y=atom[2], z=atom[3])
 
-        return template.format(title=self.title, charge=self.charge, multiplicity=self.multiplicity,
+        return template.format(title=self.title, charge=self.charge, multiplicity=self.multiplicity, scf_type=scf_type,
                                coordinates=coordinate_block)
