@@ -42,6 +42,8 @@ class Molecule(MoleculeFormatterMixin):
         """
         Creates a Molecule object from an XYZ file
         :param xyz_file: the xyz file as a file-like object or path
+        :param psi4_path: the path to the psi4 executable
+        :return: a Molecule object
         """
 
         def read_xyz_file(fp):
@@ -54,7 +56,7 @@ class Molecule(MoleculeFormatterMixin):
                     continue
                 xyz_parts = line.split()
                 if line_number == 1:
-                    title = line
+                    title = line.replace (" ", "_")
                 elif line_number > 1 and len(xyz_parts) >= 4:
                     atom_list.append((xyz_parts[0], float(xyz_parts[1]), float(xyz_parts[2]), float(xyz_parts[3])))
                 line_number += 1
@@ -65,6 +67,41 @@ class Molecule(MoleculeFormatterMixin):
                 return read_xyz_file(f)
         else:
             return read_xyz_file(xyz_file)
+
+    @staticmethod
+    def from_psi4_output(output_file, psi4_path=None):
+        """
+        Creates a molecule object from the coordinates in the output file of a Psi4 calculation
+        :param output_file: the output file as a file-like object or path
+        :param psi4_path: the path to the psi4 executable
+        :return: a Molecule object
+        """
+
+        def read_psi4_output(fp):
+            start_line = "Center              X                  Y                   Z               Mass"
+            title = ''
+            atom_list = []
+            line_number = 0
+            for line in fp:
+                # Keep ignore all lines until the start_line
+                if line.strip() != start_line and line_number == 0:
+                    continue
+                else:
+                    line_number += 1
+
+                if line_number > 2 and len(line.strip()) > 0:
+                    xyz_parts = line.split()
+                    atom_list.append((xyz_parts[0], float(xyz_parts[1]), float(xyz_parts[2]), float(xyz_parts[3])))
+                elif line_number > 2:
+                    break
+            return Molecule(title, atom_list, psi4_path=psi4_path)
+
+        if isinstance(output_file, str):
+            with open(output_file, 'r') as f:
+                return read_psi4_output(f)
+        else:
+            return read_psi4_output(output_file)
+
 
     def add_atom(self, label, x, y, z):
         """
