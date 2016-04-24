@@ -66,7 +66,8 @@ if __name__ == "__main__":
     parser.add_argument("--output_to", help="file name for output to be written,"
                                             "'STDOUT' to print to screen, or 'AUTO' to autogenerate file names",
                         type=str, default="STDOUT")
-    parser.add_argument("--calc_type", help="the type of calculation to request", type=str, choices=['energy'],
+    parser.add_argument("--calc_type", help="the type of calculation to request", type=str,
+                        choices=['energy', 'makefp'],
                         default="energy")
     parser.add_argument("--calc_method", help="the method of calculation (e.g. type=energy, method=mp2)", type=str,
                         default=None)
