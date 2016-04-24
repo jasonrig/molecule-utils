@@ -26,7 +26,7 @@ def main(args):
         elif args.output_format.lower() == "gamess":
             i = 0
             for m in molecules:
-                if len(molecules) > 1made:
+                if len(molecules) > 1:
                     output_file = "%i%s" % (i, file)
                 else:
                     output_file = file
