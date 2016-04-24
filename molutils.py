@@ -26,9 +26,13 @@ def main(args):
         elif args.output_format.lower() == "gamess":
             i = 0
             for m in molecules:
+                if len(molecules) > 1made:
+                    output_file = "%i%s" % (i, file)
+                else:
+                    output_file = file
                 job_formatter = GamessJobFormatter(m, args.basis_set, args.memory, args.memory_ddi)
                 _output(job_formatter.format(args.calc_type, args.calc_method, guess_charge=args.guess_charge),
-                        "%i%s" % (i, file),
+                        output_file,
                         'inp',
                         args.output_to)
                 i += 1
