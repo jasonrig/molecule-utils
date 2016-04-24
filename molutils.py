@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 import re
 from molutils.util.molecule import Molecule
