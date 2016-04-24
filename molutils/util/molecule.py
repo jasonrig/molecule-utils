@@ -39,6 +39,22 @@ class Molecule(MoleculeFormatterMixin):
         return self.atom_list.__len__()
 
     @staticmethod
+    def from_file(file, psi4_path=None):
+        """
+        Tries all file formats to detect the correct one
+        :param file: file as path or file-like object
+        :param psi4_path: path to psi4 execitable
+        :return: a Molecule object
+        """
+        molecule = Molecule.from_xyz_file(file, psi4_path=psi4_path)
+        if len(molecule) > 0:
+            return molecule
+
+        molecule = Molecule.from_psi4_output(file, psi4_path=psi4_path)
+        if len(molecule) > 0:
+            return molecule
+
+    @staticmethod
     def from_xyz_file(xyz_file, psi4_path=None):
         """
         Creates a Molecule object from an XYZ file

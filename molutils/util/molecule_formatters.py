@@ -60,6 +60,7 @@ class MoleculeFormatterMixin(object):
             scf_type = "UHF"
 
         template = (" $CONTRL ICHARG={charge} MULT={multiplicity} SCFTYP={scf_type} $END\n"
+                    " $CONTRL ISPHER=1 $END\n"
                     " $SCF DIRSCF=.TRUE. DIIS=.TRUE. $END\n"
                     " $DATA\n"
                     "C1\n"
