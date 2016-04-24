@@ -63,8 +63,8 @@ class MoleculeFormatterMixin(object):
                     " $CONTRL ISPHER=1 $END\n"
                     " $SCF DIRSCF=.TRUE. DIIS=.TRUE. $END\n"
                     " $DATA\n"
-                    "C1\n"
                     "{title}\n"
+                    "C1\n"
                     "{coordinates}"
                     " $END\n")
         coordinate_template = "{label}   {z_number:.1f}   {x:.10f} {y:.10f} {z:.10f}\n"
