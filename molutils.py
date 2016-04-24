@@ -57,9 +57,9 @@ def _output(content, input_file_name, output_ext, destination):
             output_file_name = "%s.%s" % (input_file_name, output_ext)
         print("Created: %s" % output_file_name)
     else:
-        input_file_name = destination
+        output_file_name = destination
 
-    with open(input_file_name, "w") as f:
+    with open(output_file_name, "w") as f:
         f.write(content)
 
 
