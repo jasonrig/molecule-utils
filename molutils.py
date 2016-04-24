@@ -27,7 +27,7 @@ def main(args):
             i = 0
             for m in molecules:
                 if len(molecules) > 1:
-                    output_file = "%i%s" % (i, file)
+                    output_file = "%i_%s" % (i, file)
                 else:
                     output_file = file
                 job_formatter = GamessJobFormatter(m, args.basis_set, args.memory, args.memory_ddi)
@@ -52,7 +52,7 @@ def _output(content, input_file_name, output_ext, destination):
         return
     elif destination == "AUTO":
         if ext_matcher:
-            output_file_name = ext_matcher.sub(output_ext, input_file_name, count=1)
+            output_file_name = ext_matcher.sub('.'+output_ext, input_file_name, count=1)
         else:
             output_file_name = "%s.%s" % (input_file_name, output_ext)
         print("Created: %s" % output_file_name)
