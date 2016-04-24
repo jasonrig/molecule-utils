@@ -46,13 +46,21 @@ class Molecule(MoleculeFormatterMixin):
         :param psi4_path: path to psi4 execitable
         :return: a Molecule object
         """
-        molecule = Molecule.from_xyz_file(file, psi4_path=psi4_path)
-        if len(molecule) > 0:
-            return molecule
+        try:
+            molecule = Molecule.from_xyz_file(file, psi4_path=psi4_path)
+            if len(molecule) > 0:
+                return molecule
+        except:
+            pass
 
-        molecule = Molecule.from_psi4_output(file, psi4_path=psi4_path)
-        if len(molecule) > 0:
-            return molecule
+        try:
+            molecule = Molecule.from_psi4_output(file, psi4_path=psi4_path)
+            if len(molecule) > 0:
+                return molecule
+        except:
+            pass
+
+        raise ValueError("Unsupported file type")
 
     @staticmethod
     def from_xyz_file(xyz_file, psi4_path=None):
