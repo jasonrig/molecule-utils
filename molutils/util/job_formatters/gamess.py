@@ -16,7 +16,10 @@ class GamessJobFormatter(Formatter):
         return "$BASIS %s $END" % self.basis_set
 
     def _format_memory(self):
-        return "$SYSTEM MWORDS=%i MEMDDI=%i $END" % (self.mwords, self.memddi)
+        if self.memddi:
+            return "$SYSTEM MWORDS=%i MEMDDI=%i $END" % (self.mwords, self.memddi)
+        else:
+            return "$SYSTEM MWORDS=%i $END" % self.mwords
 
     def format(self, type, method, guess_charge=False):
         if type == "makefp":
