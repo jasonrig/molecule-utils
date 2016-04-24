@@ -31,6 +31,7 @@ def main(args):
                         "%i%s" % (i, file),
                         'inp',
                         args.output_to)
+                i += 1
 
         else:
             raise NotImplemented("%s output format not yet implemented" % args.output_format)
@@ -71,7 +72,7 @@ if __name__ == "__main__":
                         default="energy")
     parser.add_argument("--calc_method", help="the method of calculation (e.g. type=energy, method=mp2)", type=str,
                         default=None)
-    parser.add_argument("--basis_set", help="the basis set to use", type=str, default="cc-pVTZ")
+    parser.add_argument("--basis_set", help="the basis set to use", type=str, default=None)
     parser.add_argument("--n_frags", help="the number of fragments the XYZ file should be split into", type=int,
                         default=1)
     parser.add_argument("--guess_charge", help="guess the charge", action="store_true", default=False)

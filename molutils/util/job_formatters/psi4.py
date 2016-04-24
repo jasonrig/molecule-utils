@@ -4,9 +4,11 @@ from .formatter import Formatter
 
 class Psi4JobFormatter(Formatter):
 
-    def __init__(self, molecule, basis_set="cc-pVTZ", memory=250, memory_units="mb"):
+    def __init__(self, molecule, basis_set=None, memory=250, memory_units="mb"):
         self.molecule = molecule
         self.basis_set = basis_set
+        if self.basis_set is None:
+            self.basis_set = "cc-pVTZ"
         self.memory = memory
         self.memory_units = memory_units
 
