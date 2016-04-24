@@ -38,7 +38,7 @@ def main(args):
 
 def _output(content, input_file_name, output_ext, destination):
     file_name_parts = input_file_name.rsplit('.', 1)
-    if len(file_name_parts > 1):
+    if len(file_name_parts) > 1:
         ext_matcher = re.compile('\\.(%s)$' % file_name_parts[-1])
     else:
         ext_matcher = None
