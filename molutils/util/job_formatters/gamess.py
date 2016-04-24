@@ -20,7 +20,7 @@ class GamessJobFormatter(Formatter):
         if type == "makefp":
             return self.makefp(guess_charge=guess_charge)
         else:
-            raise NotImplemented("Calculation type %s not implemented for GAMESS calculations" % type)
+            raise NotImplementedError("Calculation type %s not implemented for GAMESS calculations" % type)
 
     def makefp(self, guess_charge=False):
         if isinstance(self.molecule, Molecule):
